@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.5">
+    <script src="{{url_for('serve_static', filename='/hours/static/hours_edit_data.js')}}"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 15px;
+            background-color: rgb(184, 184, 184);
+            position: -webkit-sticky; 
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body onload="generate_table()">
+    <input type="button" value="Zurück" onclick="
+        window.location.replace('/hours');
+    "></input>
+    <input type="button" value="Speichern" onclick="
+        save_data();
+    "></input>
+    <input type="button" value="Download Excel File" onclick="
+        download_button_onlclick();
+    "></input>
+    <br></br>
+</body>
+
+</html>
