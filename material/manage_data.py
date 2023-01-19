@@ -1,85 +1,79 @@
 import json
 import xlsxwriter
-import os
+import datetime
 
-def current_dir():
-    return os.getcwd() + '/'
+def get_template_names(filepath):
+    with open(filepath, 'r') as f:
+        obj = json.load(f)
 
-def save(data, mode):
-    filepath = current_dir() + 'material/' + mode + '.json'
+        return list(obj.keys())
 
-    for key in data:
-        for el in data[key]:
-            el['missing'] = 0
 
+def get_template(filepath, template_name):
+    with open(filepath, 'r') as f:
+        obj = json.load(f)
+
+        return obj[template_name]
+
+
+def save_data(filepath, data):
     with open(filepath, 'r') as f:
         try:
-            old_data = json.load(f)
+            existing_data = json.load(f)
         except:
-            old_data = {}
-
-    if old_data == None:
-        old_data = {}
+            existing_data = {}
+        
+    if existing_data == None:
+        existing_data = {}
 
     with open(filepath, 'w') as f:
-        json.dump({**old_data, **data}, f)
+        json.dump({**existing_data, **data}, f)
 
-def load(name, mode):
-    filepath = current_dir() + 'material/' + mode + '.json'
-
+def remove_data(filepath, data_name):
     with open(filepath, 'r') as f:
         try:
             data = json.load(f)
         except:
-            return []
-
-    if name in data:
-        return data[name]
+            data = {}
+        
+    if data == None or data_name == '':
+        data = {}
     else:
-        return []
+        data.pop(data_name)
 
-def delete(_delete, mode):
-    filepath = current_dir() + 'material/' + mode + '.json'
-
-    if _delete == '***':
-        with open(filepath, 'w') as f:
-            f.write('{}')
-    else:
-        with open(filepath, 'r') as f:
-            try:
-                data = json.load(f)
-            except:
-                data = {}
-
-        data.pop(_delete, None)    
-
-        with open(filepath, 'w') as f:
-            json.dump(data, f)
+    with open(filepath, 'w') as f:
+        json.dump(data, f)
     
-def write_to_excel(data, worksheet):
-    row = 0
+
+def write_to_excel(data, worksheet, offset=0):
+    row = offset
     for table_name in data:
         worksheet.write(row, 0, table_name)
         row += 1
         for el in data[table_name]:
-            if el['missing'] == 0:
-                continue
             worksheet.write(row, 1, el['name'])
             worksheet.write(row, 2, el['missing'])
             row += 1
 
-def export(filename):
-    data_filepath = current_dir() + 'material/data.json'
-    output_filepath = current_dir() + filename
 
+def export_data(output_filepath, data_filepath):
     with open(data_filepath, 'r') as f:
-        data = json.load(f)
+        try: 
+            data = json.load(f)
+        except:
+            data = {}
+
+    if data == None:
+        data = {}
+
+    date = datetime.datetime.today()
+    date_str = date.strftime('%d.%m.%Y')
 
     workbook = xlsxwriter.Workbook(output_filepath)
     worksheet = workbook.add_worksheet()
-    
-    write_to_excel(data, worksheet)
+
+    worksheet.write(0, 0, 'Datum:')
+    worksheet.write(0, 1, date_str)
+    write_to_excel(data, worksheet, 1)
 
     workbook.close()
-
-

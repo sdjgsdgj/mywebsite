@@ -1,60 +1,47 @@
 from flask import Blueprint, request, render_template, jsonify, send_file
-from material.text_recognition import text_recognition_api, get_material
 import material.manage_data as manage_data
 import json
+import os
 
 views = Blueprint('material_views', __name__, template_folder='templates')
+
+template_filepath = os.getcwd() + '/material/template.json'
+data_filepath = os.getcwd() + '/material/data.json'
+output_filepath = os.getcwd() + '/material/output.xlsx'
 
 @views.route('/')
 def hours():
     return render_template('material_home.html')
 
-@views.route('/send-image', methods=['POST'])
-def get_image():
-    image_raw = request.data
-    image_filename = request.headers['fileName']
+@views.route('/get-template-names', methods=['GET'])
+def send_template_names():
+    template_names = manage_data.get_template_names(template_filepath)
 
-    data_api = text_recognition_api(image_raw, image_filename)
+    return jsonify(template_names)
 
-    if data_api['IsErroredOnProcessing']:
-        return data_api
+@views.route('/get-template', methods=['GET'])
+def send_template():
+    template_name = request.headers['template-name']
 
-    raw_text = data_api['ParsedResults'][0]['ParsedText']
-    material = get_material(raw_text)
+    template = manage_data.get_template(template_filepath, template_name)
 
-    response_data = {
-        'material': material,
-        'ProcessingTimeMS': data_api['ProcessingTimeInMilliseconds']
-    }
+    return jsonify(template)
 
-    return jsonify(response_data)
-
-@views.route('/send-table', methods=['POST'])
-def get_table():
-    table_data = json.loads(request.data)
-    table_mode = request.headers['mode']
-    table_delete = request.headers['delete']
-
-    if len(table_delete) > 0:
-        manage_data.delete(table_delete, table_mode)
-    else:
-        manage_data.save(table_data, table_mode)
+@views.route('/save-data', methods=['POST'])
+def get_data():
+    data = json.loads(request.data)
+    manage_data.save_data(data_filepath, data)
 
     return 'OK'
 
-@views.route('/get-table', methods=['GET'])
-def send_table():
-    table_name = request.headers['name']
-    table_mode = request.headers['mode']
+@views.route('/export-data', methods=['GET'])
+def export_data():
+    manage_data.export_data(output_filepath, data_filepath)
 
-    return jsonify(manage_data.load(table_name, table_mode))
+    return send_file(output_filepath)
 
-
-@views.route('/export-table', methods=['GET'])
-def export_table():
-    filename = 'material/output.xlsx'
-    manage_data.export(filename)
-
-    return send_file(filename)
-
-
+@views.route('/remove-data', methods=['PUT'])
+def remove_data():
+    data_name = request.headers['data-name']
+    manage_data.remove_data(data_filepath, data_name)
+    return 'OK'

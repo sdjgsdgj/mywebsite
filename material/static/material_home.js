@@ -1,228 +1,175 @@
-var material_data = [];
+var material_data = null;
+var material_data1 = null;
+var current_element_index = null;
 
-function image_from_file_uploader() {
-    const file_uploader = document.getElementById('file_uploader');
-
-    const file = file_uploader.files[0];
-    var blob = file.slice();
-    blob.fileName = file.name;
-
-    return blob;
-}
-
-async function text_recognition(image_data) {
-    const loader_html = document.getElementById('loader');
-    loader_html.style.visibility = 'visible';
-
-    const response = await fetch('/material/send-image', {
-        method: 'POST',
-        headers: {
-            'Filename': image_data.fileName
-        },
-        body: image_data
+async function onload() {
+    //save
+    const save_element = document.getElementById('save');
+    save_element.addEventListener('click', async () => {
+        await save();
     });
 
-    const data = await response.json();
+    //export
+    const export_element = document.getElementById('export');
+    export_element.addEventListener('click', async () => {
+        await save();
+        await export_data();
+    });
 
-    loader_html.style.visibility = 'hidden';
+    //remove data
+    const remove_data_element = document.getElementById('remove-data');
+    remove_data_element.addEventListener('click', async () => {
+        const data_name = document.getElementById('select').value;
+        await remove_data(data_name);
+    });
 
-    const table_container_html = document.getElementById('table-container');
+    //load available template names
+    const template_names = await load_template_names();
 
-    if ('IsErroredOnProcessing' in data && data.IsErroredOnProcessing) {
-        console.error(data);
-        data = [];
-    }
+    //load material1
+    material_data1 = await load_template('Kasten 1');
 
-    material_data = data.material;
-    create_table(data.material);
-}
+    //select
+    const select_element = document.getElementById('select');
+    select_element.innerHTML = '';
+    template_names.forEach(tm => {
+        select_element.innerHTML += `<option>${tm}</option>`;
+    });
+    select_element.addEventListener('change', async (e) => {
+        const template_name = e.currentTarget.value;
+        const template = await load_template(template_name);
 
-function get_child_index(child, parent) {
-    for (let i = 0; i < parent.childElementCount; i++)
-        if (parent.childNodes[i] == child)
-            return i;
-    return -1;
-}
-
-function append_row(data, parent_html) {
-    const row_html = document.createElement('tr');
+        material_data = template;
+        current_element_index = 0;
+        set_element();
+    });
+    select_element.value = null;
 
     //name
-    const name_html = document.createElement('td');
-    const name_input_html = document.createElement('input');
-    name_input_html.type = 'text';
-    name_input_html.value = data.name;
-    name_input_html.style.width = '100px';
-    name_input_html.addEventListener('input', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const table = document.getElementById('table');
-
-        const index = get_child_index(this_row, table);
-
-        material_data[index - 1].name = this_.value;
+    const name_element = document.getElementById('name');
+    name_element.addEventListener('change', (e) => {
+        if (current_element_index)
+            material_data[current_element_index].name = e.currentTarget.value;
     });
-    name_html.appendChild(name_input_html);
-    row_html.appendChild(name_html);
-
-    //missing
-    const missing_html = document.createElement('td');
-    const missing_input_html = document.createElement('input');
-    missing_input_html.id = 'missing';
-    missing_input_html.type = 'number';
-    missing_input_html.value = data.missing;
-    missing_input_html.style.width = '60px';
-    missing_input_html.addEventListener('input', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const table = document.getElementById('table');
-
-        const index = get_child_index(this_row, table);
-
-        material_data[index - 1].missing = parseInt(this_.value);
-    });
-    missing_html.appendChild(missing_input_html);
-    row_html.appendChild(missing_html);
 
     //cnt
-    const cnt_html = document.createElement('td');
-    const cnt_input_html = document.createElement('input');
-    cnt_input_html.id = 'cnt';
-    cnt_input_html.type = 'number';
-    cnt_input_html.value = data.cnt;
-    cnt_input_html.style.width = '60px';
-    cnt_input_html.addEventListener('input', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const table = document.getElementById('table');
-
-        const index = get_child_index(this_row, table);
-
-        material_data[index - 1].cnt = parseInt(this_.value);
+    const cnt_element = document.getElementById('cnt');
+    name_element.addEventListener('change', (e) => {
+        if (current_element_index)
+            material_data[current_element_index].cnt = e.currentTarget.value;
     });
-    cnt_html.appendChild(cnt_input_html);
-    row_html.appendChild(cnt_html);
+
+    //missing
+    const missing_element = document.getElementById('missing');
+    name_element.addEventListener('change', (e) => {
+        if (current_element_index)
+            material_data[current_element_index].missing = e.currentTarget.value;
+    });
 
     //increase
-    const increase_html = document.createElement('td');
-    const increase_input_html = document.createElement('input');
-    increase_input_html.type = 'button';
-    increase_input_html.value = '+';
-    increase_input_html.addEventListener('click', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const missing_element = this_row.querySelector('#missing');
-        const table = document.getElementById('table');
+    const increase_element = document.getElementById('increase');
+    increase_element.addEventListener('click', () => {
+        if (current_element_index != null) {
+            material_data[current_element_index].missing++;
 
-        const index = get_child_index(this_row, table);
-        missing_element.value = ++material_data[index - 1].missing;
-    });
-    increase_html.appendChild(increase_input_html);
-    row_html.appendChild(increase_html);
-
-    //decrease
-    const decrease_html = document.createElement('td');
-    const decrease_input_html = document.createElement('input');
-    decrease_input_html.type = 'button';
-    decrease_input_html.value = '-';
-    decrease_input_html.addEventListener('click', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const missing_element = this_row.querySelector('#missing');
-        const table = document.getElementById('table');
-
-        const index = get_child_index(this_row, table);
-        missing_element.value = --material_data[index - 1].missing;
-    });
-    decrease_html.appendChild(decrease_input_html);
-    row_html.appendChild(decrease_html);
-
-    //delete
-    const delete_html = document.createElement('td');
-    const delete_input_html = document.createElement('input');
-    delete_input_html.type = 'button';
-    delete_input_html.value = 'X';
-    delete_input_html.style.color = 'red';
-    delete_input_html.addEventListener('click', (event) => {
-        const this_ = event.currentTarget;
-        const this_row = this_.parentElement.parentElement;
-        const table = document.getElementById('table');
-
-        const index = get_child_index(this_row, table);
-        material_data.splice(index - 1, 1);
-
-        table.removeChild(this_row);
-    });
-    delete_html.appendChild(delete_input_html);
-    row_html.appendChild(delete_html);
-
-    parent_html.appendChild(row_html);
-}
-
-function create_table(data) {
-    const table_html = document.getElementById('table');
-
-    const header_row_html = document.createElement('tr');
-    header_row_html.innerHTML = `
-        <th>name</th>
-        <th>missing</th>
-        <th>cnt</th>
-        <th>increase</th>
-        <th>decrease</th>
-        <th>delete</th>
-    `;
-    table_html.innerHTML = header_row_html.outerHTML;
-
-    data.forEach(el => {
-        append_row(el, table_html);
-    });
-}
-
-async function save_table(name, mode) {
-    // console.log('save ' + mode + 'with name ' + name);
-
-    const table_data = { [name]: material_data };
-
-    var _delete = '';
-    if (name.length >= 3 && name.substring(0, 3) == '***') {
-        if (name.length == 3)
-            _delete = '***';
-        else
-            _delete = name.substring(3);
-    }
-
-    const response = await fetch('/material/send-table', {
-        method: 'POST',
-        headers: {
-            'mode': mode,
-            'delete': _delete
-        },
-        body: JSON.stringify(table_data)
-    });
-}
-
-async function load_table(name, mode) {
-    // console.log('load ' + mode + 'with name ' + name);
-
-    const response = await fetch('/material/get-table', {
-        method: 'GET',
-        headers: {
-            'name': name,
-            'mode': mode
+            set_element();
         }
     });
 
-    const data = await response.json();
+    //decrease
+    const decrease_element = document.getElementById('decrease');
+    decrease_element.addEventListener('click', () => {
+        if (current_element_index != null) {
+            if (material_data[current_element_index].missing > 0)
+                material_data[current_element_index].missing--;
 
-    material_data = data;
+            set_element();
+        }
+    });
 
-    create_table(material_data)
+    //previous
+    const previous_element = document.getElementById('previous');
+    previous_element.addEventListener('click', () => {
+        if (current_element_index != null && current_element_index > 0) {
+            current_element_index--;
+            set_element();
+        }
+    });
+
+    //next
+    const next_element = document.getElementById('next');
+    next_element.addEventListener('click', () => {
+        if (current_element_index != null) {
+            if (current_element_index < material_data.length - 1) {
+                current_element_index++;
+                set_element();
+            }
+        }
+    });
+
+    //add
+    const add_element = document.getElementById('add');
+    add_element.addEventListener('click', () => {
+        if (current_element_index != null) {
+            material_data.splice(
+                current_element_index,
+                0,
+                { name: '', cnt: null, missing: 0 });
+
+            set_element();
+        }
+    });
 }
 
-async function export_table() {
-    const response = await fetch('/material/export-table');
+async function load_template_names() {
+    const r = await fetch('/material/get-template-names');
+    const template_names = await r.json();
 
-    const fileToSave = await response.blob();
+    return template_names;
+}
+
+async function load_template(template_name) {
+    const r = await fetch('/material/get-template', {
+        method: 'GET',
+        headers: {
+            'template-name': template_name
+        }
+    });
+
+    const template = await r.json();
+
+    template.forEach(el => el.missing = 0);
+
+    return template;
+}
+
+function set_element(element = material_data[current_element_index]) {
+    document.getElementById('name').value = element.name;
+    document.getElementById('cnt').value = element.cnt;
+    document.getElementById('missing').value = element.missing;
+
+    set_led(element.name);
+}
+
+async function save() {
+    if (material_data != null && material_data.length) {
+        const data_name = document.getElementById('select').value;
+        const new_array = material_data.filter(el => {
+            return el.name.length > 0 && el.missing > 0;
+        });
+        var data = { [data_name]: new_array };
+
+        const r = await fetch('/material/save-data', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+}
+
+async function export_data() {
+    const r = await fetch('/material/export-data');
+
+    const fileToSave = await r.blob();
 
     const linkElement = document.createElement('a');
     linkElement.href = window.URL.createObjectURL(fileToSave);
@@ -230,4 +177,23 @@ async function export_table() {
     document.body.appendChild(linkElement);
     linkElement.click();
     document.body.removeChild(linkElement);
+}
+
+async function remove_data(data_name) {
+    const r = await fetch('/material/remove-data', {
+        method: 'PUT',
+        headers: {
+            'data-name': data_name
+        }
+    });
+}
+
+function set_led(name) {
+    const led_element = document.getElementById('led');
+    const template_name = document.getElementById('select').value;
+
+    if (material_data1.find(el => el.name == name) && template_name != 'Kasten 1')
+        led_element.style.color = 'green';
+    else 
+        led_element.style.color = 'black'; 
 }
