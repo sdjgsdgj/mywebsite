@@ -102,7 +102,7 @@ def output_data(input_filename, output_filename):
         worksheet.write(row, 5, str(work_hours - overtime_comp))
         # zeitausgleich
         wanted_overtime_comp_str = ''
-        if day['overtime_comp_prio'] != 0 and overtime_comp == 0.0:
+        if day['overtime_comp_prio'] != 0 and overtime_comp != work_hours:
             wanted_overtime_comp_str = f" ({work_hours})"
         worksheet.write(row, 4, f"{overtime_comp}{wanted_overtime_comp_str}")
         # stunden ist
@@ -115,7 +115,7 @@ def output_data(input_filename, output_filename):
             vacation_left -= 1
         # zeitausgleich verbleibend
         if worked_hours is not None:
-            overtime_comp_left += worked_hours - work_hours
+            overtime_comp_left += worked_hours - (work_hours - overtime_comp)
         overtime_comp_left -= overtime_comp
 
     # urlaub verbleibend

@@ -185,8 +185,19 @@ async function generate_table() {
         overtime_comp_prio.style.padding = 15;
         overtime_comp_prio.style.border = 0;
         overtime_comp_prio.style.fontSize = 16;
-        overtime_comp_prio.step = 1.0;
+        overtime_comp_prio.step = 0.1;
         overtime_comp_prio.value = day.overtime_comp_prio;
+        overtime_comp_prio.addEventListener('input', (e) => {
+            const this_ = e.currentTarget;
+
+            if (this_.value == 0) {
+                const this_parent_parent = this_.parentNode.parentNode;
+    
+                const overtime_comp_element = this_parent_parent.querySelector('#overtime_comp');
+    
+                overtime_comp_element.firstChild.value = 0;
+            }
+        });
         if (day.overtime_comp_prio != 0) {
             overtime_comp_prio.style.fontWeight = 900;
             overtime_comp_prio.style.color = orange;
@@ -231,7 +242,7 @@ function get_updated_data() {
 
         //overtime_comp_prio
         const overtime_comp_prio_element = row.querySelector('#overtime_comp_prio');
-        data_row.overtime_comp_prio = parseInt(overtime_comp_prio_element.childNodes[0].value);
+        data_row.overtime_comp_prio = parseFloat(overtime_comp_prio_element.childNodes[0].value);
 
         //overtime_comp
         const overtime_comp_element = row.querySelector('#overtime_comp');
