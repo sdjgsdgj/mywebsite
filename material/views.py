@@ -5,27 +5,30 @@ import os
 
 views = Blueprint('material_views', __name__, template_folder='templates')
 
-template_filepath = os.getcwd() + '/material/template.json'
-data_filepath = os.getcwd() + '/material/data.json'
 output_filepath = os.getcwd() + '/material/output.xlsx'
+data_filepath = os.getcwd() + '/material/data.json'
 
 @views.route('/')
-def hours():
+def material_home():
     return render_template('material_home.html')
 
-@views.route('/get-template-names', methods=['GET'])
-def send_template_names():
-    template_names = manage_data.get_template_names(template_filepath)
+@views.route('/edit')
+def material_edit():
+    return render_template('material_edit.html')
 
-    return jsonify(template_names)
+@views.route('/get-names', methods=['GET'])
+def send_names():
+    names = manage_data.get_names(data_filepath)
 
-@views.route('/get-template', methods=['GET'])
-def send_template():
-    template_name = request.headers['template-name']
+    return jsonify(names)
 
-    template = manage_data.get_template(template_filepath, template_name)
+@views.route('/get-data', methods=['GET'])
+def send_data():
+    name = request.headers['name']
 
-    return jsonify(template)
+    data = manage_data.get_data(data_filepath, name)
+
+    return jsonify(data)
 
 @views.route('/save-data', methods=['POST'])
 def get_data():
@@ -40,8 +43,9 @@ def export_data():
 
     return send_file(output_filepath)
 
-@views.route('/remove-data', methods=['PUT'])
+@views.route('/clear-data', methods=['PUT'])
 def remove_data():
-    data_name = request.headers['data-name']
-    manage_data.remove_data(data_filepath, data_name)
+    name = request.headers['data-name']
+    manage_data.clear_data(data_filepath, name)
+    
     return 'OK'

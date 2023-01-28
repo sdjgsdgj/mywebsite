@@ -26,7 +26,8 @@ def calc_overtime_comp(_data):
     for day in _data:
         overtime_comp_left -= day['overtime_comp']
         if day['worked_hours'] is not None:
-            overtime_comp_left += day['worked_hours'] - calc_work_hours(day)
+            change = day['worked_hours'] - (calc_work_hours(day) - day['overtime_comp'])
+            overtime_comp_left += change
 
     sorted_data = sorted(
         _data, 

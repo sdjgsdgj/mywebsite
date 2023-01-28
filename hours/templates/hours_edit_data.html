@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="{{url_for('serve_static', filename='/hours/static/hours_edit_data.js')}}"></script>
     <style>
         table {
@@ -22,20 +22,23 @@
             border: 1px solid rgb(0, 0, 0);
             padding: 15px;
         }
+
+        .text {
+            font-size: 25px;
+        }
     </style>
 </head>
 
 <body onload="generate_table()">
-    <input type="button" value="Zurück" onclick="
+    <input type="button" value="back" class="text" onclick="
         window.location.replace('/hours');
     "></input>
-    <input type="button" value="Speichern" onclick="
+    <input type="button" value="save" class="text" onclick="
         save_data();
     "></input>
-    <input type="button" value="Download Excel File" onclick="
+    <input type="button" value="export" class="text" onclick="
         download_button_onlclick();
     "></input>
-    <br></br>
 </body>
 
 </html>

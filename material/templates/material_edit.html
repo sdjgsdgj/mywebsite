@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{url_for('serve_static', filename='/material/static/material_edit.js')}}"></script>
+
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 15px;
+            background-color: rgb(184, 184, 184);
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 15px;
+        }
+
+        .text {
+            font-size: 25px;
+        }
+    </style>
+</head>
+
+<body onload="onload();">
+    <input type="button" value="back" class="text" onclick="
+        document.location.replace('/material');
+    ">
+    <input type="button" value="clear all" id="clear-all" class="text">
+    <br><br>
+
+    <select id="select-data" class="text"></select>
+    <input type="button" value="save" class="text" id="save-data">
+    <input type="button" value="clear" class="text" id="clear-data">
+    <br><br>
+    
+    <input type="button" value="add" class="text" id="add">
+    <br><br>
+
+    <table class="text" id="table"></table>
+    
+</body>
+
+</html>

@@ -383,7 +383,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 9,
         "str": "2023-12-01"
     },
     {
@@ -392,7 +392,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 7,
         "str": "2023-13-01"
     },
     {
@@ -401,7 +401,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 0,
         "str": "2023-14-01"
     },
     {
@@ -410,7 +410,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 0,
         "str": "2023-15-01"
     },
     {
@@ -419,7 +419,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-16-01"
     },
     {
@@ -428,7 +428,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-17-01"
     },
     {
@@ -437,7 +437,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 9.5,
         "str": "2023-18-01"
     },
     {
@@ -446,7 +446,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-19-01"
     },
     {
@@ -454,8 +454,8 @@
         "holiday": false,
         "vacation": false,
         "overtime_comp_prio": 0,
-        "overtime_comp": 0,
-        "worked_hours": null,
+        "overtime_comp": 0.5,
+        "worked_hours": 5.5,
         "str": "2023-20-01"
     },
     {
@@ -464,7 +464,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 0,
         "str": "2023-21-01"
     },
     {
@@ -473,7 +473,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 0,
         "str": "2023-22-01"
     },
     {
@@ -482,7 +482,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-23-01"
     },
     {
@@ -491,7 +491,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-24-01"
     },
     {
@@ -500,7 +500,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-25-01"
     },
     {
@@ -509,7 +509,7 @@
         "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8.5,
         "str": "2023-26-01"
     },
     {
@@ -517,7 +517,7 @@
         "holiday": false,
         "vacation": false,
         "overtime_comp_prio": 0,
-        "overtime_comp": 0,
+        "overtime_comp": 6,
         "worked_hours": null,
         "str": "2023-27-01"
     },
@@ -957,7 +957,7 @@
         "id": 738596,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": -5,
+        "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-17-03"
@@ -1020,7 +1020,7 @@
         "id": 738603,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": -6,
+        "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-24-03"
@@ -1083,7 +1083,7 @@
         "id": 738610,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": -7,
+        "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-31-03"
@@ -1136,7 +1136,7 @@
     {
         "id": 738616,
         "holiday": false,
-        "vacation": false,
+        "vacation": true,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
@@ -1146,7 +1146,7 @@
         "id": 738617,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": 0,
+        "overtime_comp_prio": -3,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-07-04"
@@ -1182,7 +1182,7 @@
         "id": 738621,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": -4,
+        "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-11-04"
@@ -1190,7 +1190,7 @@
     {
         "id": 738622,
         "holiday": false,
-        "vacation": true,
+        "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
@@ -1199,7 +1199,7 @@
     {
         "id": 738623,
         "holiday": false,
-        "vacation": true,
+        "vacation": false,
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
@@ -1209,7 +1209,7 @@
         "id": 738624,
         "holiday": false,
         "vacation": false,
-        "overtime_comp_prio": -3,
+        "overtime_comp_prio": 0,
         "overtime_comp": 0,
         "worked_hours": null,
         "str": "2023-14-04"

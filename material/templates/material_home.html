@@ -28,15 +28,13 @@
         document.location.replace('/');
     ">
     <input type="button" id="export" value="export" class="text"">
-    <input type="button" id="save" value="save" class="text">
+    <input type="button" id="edit" value="edit" class="text" onclick="
+        document.location.replace('/material/edit');
+    ">
     <br><br>
     
-    <select id="select" class="text">
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-    </select>
-    <input type="button" id="remove-data" value="remove" class="text">
+    <select id="select" class="text"></select>
+    <input type="button" id="clear-data" value="clear" class="text">
     <br><br>
 
     <label class="text" id="led">name: </label>
@@ -59,7 +57,7 @@
 
     <input type="button" id="previous" value="previous" class="text">
     <input type="button" id="next" value="next" class="text">
-    <input type="button" id="add" value="add" class="text">
+    <input type="button" id="save" value="save" class="text">
 
 
 </body>

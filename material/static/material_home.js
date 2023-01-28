@@ -16,54 +16,59 @@ async function onload() {
         await export_data();
     });
 
-    //remove data
-    const remove_data_element = document.getElementById('remove-data');
-    remove_data_element.addEventListener('click', async () => {
+    //clear data
+    const clear_data_element = document.getElementById('clear-data');
+    clear_data_element.addEventListener('click', async () => {
         const data_name = document.getElementById('select').value;
-        await remove_data(data_name);
+        if (data_name == '')
+            return;
+            
+        await clear_data(data_name);
     });
 
-    //load available template names
-    const template_names = await load_template_names();
+    //load available data names
+    const data_names = await load_names();
 
     //load material1
-    material_data1 = await load_template('Kasten 1');
+    material_data1 = await load_data('Kasten 1');
 
     //select
     const select_element = document.getElementById('select');
     select_element.innerHTML = '';
-    template_names.forEach(tm => {
+    data_names.forEach(tm => {
         select_element.innerHTML += `<option>${tm}</option>`;
     });
     select_element.addEventListener('change', async (e) => {
-        const template_name = e.currentTarget.value;
-        const template = await load_template(template_name);
+        const name = e.currentTarget.value;
+        const data = await load_data(name);
 
-        material_data = template;
+        material_data = data;
         current_element_index = 0;
         set_element();
+
+        set_prev_next_color();
     });
     select_element.value = null;
 
     //name
     const name_element = document.getElementById('name');
-    name_element.addEventListener('change', (e) => {
-        if (current_element_index)
+    name_element.addEventListener('input', (e) => {
+        if (current_element_index != null)
             material_data[current_element_index].name = e.currentTarget.value;
     });
 
     //cnt
     const cnt_element = document.getElementById('cnt');
-    name_element.addEventListener('change', (e) => {
-        if (current_element_index)
-            material_data[current_element_index].cnt = e.currentTarget.value;
+    cnt_element.addEventListener('input', (e) => {
+        if (current_element_index != null)
+            material_data[current_element_index].cnt = parseInt(e.currentTarget.value);
     });
 
     //missing
     const missing_element = document.getElementById('missing');
-    name_element.addEventListener('change', (e) => {
-        if (current_element_index)
-            material_data[current_element_index].missing = e.currentTarget.value;
+    missing_element.addEventListener('input', (e) => {
+        if (current_element_index != null)
+            material_data[current_element_index].missing = parseInt(e.currentTarget.value);
     });
 
     //increase
@@ -89,58 +94,51 @@ async function onload() {
 
     //previous
     const previous_element = document.getElementById('previous');
-    previous_element.addEventListener('click', () => {
+    previous_element.style.color = 'grey';
+    previous_element.addEventListener('click', (e) => {
         if (current_element_index != null && current_element_index > 0) {
             current_element_index--;
             set_element();
+
+            set_prev_next_color();
         }
     });
 
     //next
     const next_element = document.getElementById('next');
+    next_element.style.color = 'grey';
     next_element.addEventListener('click', () => {
         if (current_element_index != null) {
             if (current_element_index < material_data.length - 1) {
                 current_element_index++;
                 set_element();
+
+                set_prev_next_color();
             }
         }
     });
+}
 
-    //add
-    const add_element = document.getElementById('add');
-    add_element.addEventListener('click', () => {
-        if (current_element_index != null) {
-            material_data.splice(
-                current_element_index,
-                0,
-                { name: '', cnt: null, missing: 0 });
-
-            set_element();
-        }
+async function load_names() {
+    const r = await fetch('/material/get-names', {
+        method: 'GET'
     });
+    const names = await r.json();
+
+    return names;
 }
 
-async function load_template_names() {
-    const r = await fetch('/material/get-template-names');
-    const template_names = await r.json();
-
-    return template_names;
-}
-
-async function load_template(template_name) {
-    const r = await fetch('/material/get-template', {
+async function load_data(name) {
+    const r = await fetch('/material/get-data', {
         method: 'GET',
         headers: {
-            'template-name': template_name
+            'name': name
         }
     });
 
-    const template = await r.json();
+    const data = await r.json();
 
-    template.forEach(el => el.missing = 0);
-
-    return template;
+    return data;
 }
 
 function set_element(element = material_data[current_element_index]) {
@@ -152,12 +150,12 @@ function set_element(element = material_data[current_element_index]) {
 }
 
 async function save() {
-    if (material_data != null && material_data.length) {
+    if (material_data != null) {
+
+        console.log(material_data);
         const data_name = document.getElementById('select').value;
-        const new_array = material_data.filter(el => {
-            return el.name.length > 0 && el.missing > 0;
-        });
-        var data = { [data_name]: new_array };
+
+        var data = { [data_name]: material_data };
 
         const r = await fetch('/material/save-data', {
             method: 'POST',
@@ -179,21 +177,37 @@ async function export_data() {
     document.body.removeChild(linkElement);
 }
 
-async function remove_data(data_name) {
-    const r = await fetch('/material/remove-data', {
+async function clear_data(name) {
+    const r = await fetch('/material/clear-data', {
         method: 'PUT',
         headers: {
-            'data-name': data_name
+            'data-name': name
         }
     });
+    
+    document.getElementById('select').dispatchEvent(new Event("change"));;
 }
 
 function set_led(name) {
     const led_element = document.getElementById('led');
-    const template_name = document.getElementById('select').value;
+    const data_name = document.getElementById('select').value;
 
-    if (material_data1.find(el => el.name == name) && template_name != 'Kasten 1')
+    if (material_data1.find(el => el.name == name) && data_name != 'Kasten 1')
         led_element.style.color = 'green';
-    else 
-        led_element.style.color = 'black'; 
+    else
+        led_element.style.color = 'black';
+}
+
+function set_prev_next_color() {
+    const previous_element = document.getElementById('previous');
+    const next_element = document.getElementById('next');
+
+    if (current_element_index != null) {
+        previous_element.style.color = current_element_index == 0 ? 'grey' : 'black';
+        next_element.style.color = current_element_index == material_data.length - 1 ? 'grey' : 'black';
+
+    } else {
+        previous_element.style.color = 'grey';
+        next_element.style.color = 'grey';
+    }
 }

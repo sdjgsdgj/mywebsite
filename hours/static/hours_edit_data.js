@@ -42,11 +42,10 @@ async function generate_table() {
     var data = await get_data();
 
     const info = data.shift();
-    document.body.appendChild(document.createTextNode(`Zeitausgleich benötigt: ${info.overtime_comp_needed}`));
-    document.body.appendChild(document.createElement('br'));
-    document.body.appendChild(document.createTextNode(`Urlaub verbleibend: ${info.vacation_days_left}`));
-    document.body.appendChild(document.createElement('br'));
-    document.body.appendChild(document.createElement('br'));
+    document.body.innerHTML += `
+        <p class="text">Zeitausgleich benötigt: ${info.overtime_comp_needed}</p>
+        <p class="text">Urlaub verbleibend: ${info.vacation_days_left}</p>
+    `;
 
     let table = document.createElement('table');
     table.id = 'input_table';
@@ -62,7 +61,12 @@ async function generate_table() {
     });
 
     data.forEach(day => {
+        if (parseInt(day.date.slice(0, 2)) == 1 && table.childElementCount > 1)
+            table.appendChild(document.createElement('br'));
+
         let row = document.createElement('tr');
+        if (day.weekday == 'Sonntag')
+            row.style.borderBottom = '4px solid rgb(0, 0, 0)';
         table.appendChild(row);
 
         let row_children = [];
@@ -74,6 +78,8 @@ async function generate_table() {
 
         //wochentag
         row_children.push(document.createElement('td'));
+        if (day.weekday == 'Samstag' || day.weekday == 'Sonntag')
+            last(row_children).style.backgroundColor = '#B8B8B8';
         last(row_children).textContent = day.weekday;
 
         //feiertag
@@ -126,6 +132,10 @@ async function generate_table() {
         overtime_comp.style.fontSize = 16;
         overtime_comp.step = 0.5;
         overtime_comp.value = day.overtime_comp;
+        if (day.overtime_comp != 0) {
+            overtime_comp.style.fontWeight = 900;
+            overtime_comp.style.color = orange;
+        }
         last(row_children).style.padding = 1;
         last(row_children).appendChild(overtime_comp);
         last(row_children).id = 'overtime_comp';
@@ -158,7 +168,11 @@ async function generate_table() {
         worked_hours.style.border = 0;
         worked_hours.style.fontSize = 16;
         worked_hours.step = 0.5;
-        worked_hours.value = day.worked_hours;
+        worked_hours.value = day.worked_hours
+        if (day.worked_hours > day.work_hours)
+            worked_hours.style.color = green;
+        else if (day.worked_hours < day.work_hours)
+            worked_hours.style.color = red;
         last(row_children).style.padding = 1;
         last(row_children).appendChild(worked_hours);
         last(row_children).id = 'worked_hours';
@@ -173,6 +187,10 @@ async function generate_table() {
         overtime_comp_prio.style.fontSize = 16;
         overtime_comp_prio.step = 1.0;
         overtime_comp_prio.value = day.overtime_comp_prio;
+        if (day.overtime_comp_prio != 0) {
+            overtime_comp_prio.style.fontWeight = 900;
+            overtime_comp_prio.style.color = orange;
+        }
         last(row_children).style.padding = 1;
         last(row_children).appendChild(overtime_comp_prio);
         last(row_children).id = 'overtime_comp_prio';
@@ -194,7 +212,7 @@ function get_updated_data() {
     var data = [];
 
     table_element.childNodes.forEach((row, index) => {
-        if (index == 0)
+        if (index == 0 || row.nodeName != 'TR')
             return;
 
         data_row = {}
