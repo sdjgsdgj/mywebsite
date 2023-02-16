@@ -33,7 +33,8 @@ def calc_overtime_comp(_data):
     for day in _data:
         overtime_comp_left -= day['overtime_comp']
         if day['worked_hours'] is not None:
-            change = day['worked_hours'] - (calc_work_hours(day) - day['overtime_comp'] - day['other'])
+            work_hours = calc_work_hours(day)
+            change = day['worked_hours'] - (work_hours - day['overtime_comp'] - day['other'])
             overtime_comp_left += change
 
     sorted_data = sorted(
@@ -83,9 +84,11 @@ def output_data(input_filename, output_filename):
     worksheet.write(3, 1, 'Datum')
     worksheet.write(3, 2, 'Feiertag')
     worksheet.write(3, 3, 'Urlaub')
-    worksheet.write(3, 4, 'Zeitausgleich')
-    worksheet.write(3, 5, 'Stunden soll')
-    worksheet.write(3, 6, 'Stunden ist')
+    worksheet.write(3, 4, 'Sonstiges')
+    worksheet.write(3, 5, 'Sonstiges Grund')
+    worksheet.write(3, 6, 'Zeitausgleich')
+    worksheet.write(3, 7, 'Stunden soll')
+    worksheet.write(3, 8, 'Stunden ist')
 
     offset = 4
 
@@ -103,19 +106,23 @@ def output_data(input_filename, output_filename):
         worksheet.write(row, 2, 'Ja' if day['holiday'] else 'Nein')
         # urlaub
         worksheet.write(row, 3, 'Ja' if day['vacation'] else 'Nein')
+        # sonstiges
+        worksheet.write(row, 4, day['other'])
+        # sonstiges grund
+        worksheet.write(row, 5, day['other_reason'])
         # stunden soll
         overtime_comp = day['overtime_comp']
         work_hours = calc_work_hours(day)
-        worksheet.write(row, 5, str(work_hours - overtime_comp))
+        worksheet.write(row, 7, str(work_hours - overtime_comp - day['other']))
         # zeitausgleich
         wanted_overtime_comp_str = ''
         if day['overtime_comp_prio'] != 0 and overtime_comp != work_hours:
             wanted_overtime_comp_str = f" ({work_hours})"
-        worksheet.write(row, 4, f"{overtime_comp}{wanted_overtime_comp_str}")
+        worksheet.write(row, 6, f"{overtime_comp}{wanted_overtime_comp_str}")
         # stunden ist
         worked_hours = day['worked_hours']
         if worked_hours is not None:
-            worksheet.write(row, 6, str(worked_hours))
+            worksheet.write(row, 8, str(worked_hours))
 
         # urlaub verbleibend
         if day['vacation']:
