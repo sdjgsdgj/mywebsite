@@ -8,10 +8,22 @@
         .text {
             font-size: 25px;
         }
+
+        .button {
+            width: 180px;
+            height: 180px;
+            font-size: xx-large;
+        }
     </style>
 </head>
 
 <body onload="onLoad()">
+    <script>
+        document.addEventListener("gesturestart", function (event) {
+            event.preventDefault();
+        });
+    </script>
+    
     <label class="text">date: </label>
     <input type="date" id="date_input" class="text"></input>
     <br></br>
@@ -20,6 +32,10 @@
     <input type="number" id="worked_hours_input" style="width: 100px;" class="text"></input>
     <div id="error_message_container"></div>
     <br></br>
+
+    <input type="button" value="+ 0.5" id="increase" class="button">
+    <input type="button" value="- 0.5" id="decrease" class="button">
+    <br><br>
 
     <input type="button" id="confirm_input" class="text" value="save" onclick="confirm_button_onclick()"></input>
     <br></br>

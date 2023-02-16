@@ -41,22 +41,22 @@
             "missing": null
         },
         {
-            "name": "Dreieckst\u00fccher ",
+            "name": "Dreieckst\u00fccher",
             "cnt": 3,
             "missing": null
         },
         {
-            "name": "Zetuvid 10cmx10cm",
+            "name": "Zetuvit 10cmx10cm",
             "cnt": 2,
             "missing": null
         },
         {
-            "name": "Zetuvid 10cmx20cm",
+            "name": "Zetuvit 10cmx20cm",
             "cnt": 1,
             "missing": null
         },
         {
-            "name": "Omnifilm",
+            "name": "Omnifilm/Omniplast",
             "cnt": 6,
             "missing": null
         },
@@ -86,12 +86,12 @@
             "missing": null
         },
         {
-            "name": "Peha-haft 10cmx4cm",
+            "name": "Peha-haft 10cmx4m",
             "cnt": 12,
             "missing": null
         },
         {
-            "name": "Peha-haft 8cmx4cm",
+            "name": "Peha-haft 8cmx4m",
             "cnt": 12,
             "missing": null
         },
@@ -161,22 +161,22 @@
             "missing": null
         },
         {
-            "name": "Spritzen f\u00fcr Larynxtubus gro\u00df",
+            "name": "Spritze Larynxtubus gro\u00df",
             "cnt": 2,
             "missing": null
         },
         {
-            "name": "Spritzen f\u00fcr Larynxtubus klein",
+            "name": "Spritze Larynxtubus klein",
             "cnt": 1,
             "missing": null
         },
         {
-            "name": "Absaugbeutel",
+            "name": "Reservebeutel f\u00fcr Absauger",
             "cnt": 2,
             "missing": null
         },
         {
-            "name": "Absaugschlauch",
+            "name": "Reserveschlauch f\u00fcr Absauger",
             "cnt": 2,
             "missing": null
         },
@@ -268,7 +268,7 @@
             "missing": null
         },
         {
-            "name": "chirurgischer Mund-Nasen-Schutz",
+            "name": "chirurgische Mund-Nasen-Schutz",
             "cnt": 2,
             "missing": null
         },
@@ -288,7 +288,7 @@
             "missing": null
         },
         {
-            "name": "Wettask-T\u00fccher (Nachf\u00fcllrollen)",
+            "name": "Wettask T\u00fccher",
             "cnt": 8,
             "missing": null
         },
@@ -361,7 +361,7 @@
         },
         {
             "cnt": 10,
-            "name": "Kan\u00fclenfixierpflaster Erwachsene\t",
+            "name": "Kan\u00fclenfixierpflaster Erwachsene",
             "missing": null
         },
         {
@@ -371,12 +371,12 @@
         },
         {
             "cnt": 10,
-            "name": "Ohr-Tip's Fiebermesser\t",
+            "name": "Ohrtips Fiebermesser",
             "missing": null
         },
         {
             "cnt": 2,
-            "name": "Teststreifen Accu-Chek Performa\t",
+            "name": "Teststreifen Blutzuckermessger\u00e4t",
             "missing": null
         },
         {
@@ -386,7 +386,7 @@
         },
         {
             "cnt": 1,
-            "name": "Alkoholtupfer\t",
+            "name": "Alkoholtupfer",
             "missing": null
         },
         {
@@ -421,27 +421,27 @@
         },
         {
             "cnt": 6,
-            "name": "O2-Masken",
+            "name": "O2-Maske",
             "missing": null
         },
         {
             "cnt": 6,
-            "name": "O2-Brillen",
+            "name": "O2-Brille",
             "missing": null
         },
         {
             "cnt": 1,
-            "name": "O2-Verbindungschlauch",
+            "name": "O2-Verbindungsschlauch",
             "missing": null
         },
         {
             "cnt": 3,
-            "name": "Beatmungsmasken (einweg)",
+            "name": "Beatmungsmaske",
             "missing": null
         },
         {
             "cnt": 3,
-            "name": "Bakterienfilter (einweg)",
+            "name": "Beatmungsfilter",
             "missing": null
         },
         {

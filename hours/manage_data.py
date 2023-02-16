@@ -5,8 +5,15 @@ import datetime
 vacation_total = 10
 overtime_comp_left_total = 17
 
+last_week_nr = 0
+
 weekdays_lookup = ('Montag', 'Dienstag', 'Mittwoch',
                    'Donnerstag', 'Freitag', 'Samstag', 'Sonntag')
+
+def get_year_week():
+    date = datetime.date.today()
+
+    return (date.isocalendar()[0], date.isocalendar()[1])
 
 
 def calc_work_hours(day):
@@ -26,11 +33,11 @@ def calc_overtime_comp(_data):
     for day in _data:
         overtime_comp_left -= day['overtime_comp']
         if day['worked_hours'] is not None:
-            change = day['worked_hours'] - (calc_work_hours(day) - day['overtime_comp'])
+            change = day['worked_hours'] - (calc_work_hours(day) - day['overtime_comp'] - day['other'])
             overtime_comp_left += change
 
     sorted_data = sorted(
-        _data, 
+        _data,
         key=lambda x: (x['overtime_comp_prio'] != 0, x['overtime_comp_prio']),
         reverse=True)
 
@@ -43,10 +50,10 @@ def calc_overtime_comp(_data):
         if overtime_comp_left <= 0:
             overtime_comp_left -= _calc_work_hours
             continue
-        
+
         day['overtime_comp'] = min(overtime_comp_left, _calc_work_hours)
         overtime_comp_left -= _calc_work_hours
-    
+
     return -overtime_comp_left
 
 def read_data(filename):
@@ -142,6 +149,24 @@ def save_data(data, filename):
     file.write(json.dumps(data, indent=4))
     file.close()
 
+    year, week = get_year_week()
+    new_week_nr = year * 52 + week
+
+    global last_week_nr
+
+    if new_week_nr <=  last_week_nr:
+        return
+
+    last_week_nr = new_week_nr
+
+    new_filename = filename[:-9] + 'backup/' + str(year) + '_' + str(week) + '.txt'
+
+
+    file = open(new_filename, 'w')
+    file.write(json.dumps(data, indent=4))
+    file.close()
+
+
 def set_worked_hours(date, worked_hours, filepath):
     id = date.toordinal()
 
@@ -153,7 +178,7 @@ def set_worked_hours(date, worked_hours, filepath):
         id -= 1
         while get_value_of_day(data, id, 'worked_hours') == None:
             set_value_of_day(data, id, 'worked_hours', 0.0)
-            id -= 1 
+            id -= 1
 
     save_data(data, filepath)
 
@@ -175,9 +200,11 @@ def get_data(filepath):
         new_day['weekday'] = weekdays_lookup[date.weekday()]
         new_day['holiday'] = day['holiday']
         new_day['vacation'] = day['vacation']
+        new_day['other'] = day['other']
+        new_day['other_reason'] = day['other_reason']
         ret_data[0]['vacation_days_left'] -= new_day['vacation']
         new_day['overtime_comp'] = day['overtime_comp']
-        new_day['work_hours'] = calc_work_hours(day) - new_day['overtime_comp']
+        new_day['work_hours'] = calc_work_hours(day) - new_day['overtime_comp'] - new_day['other']
         new_day['worked_hours'] = day['worked_hours']
         new_day['overtime_comp_prio'] = day['overtime_comp_prio']
         new_day['id'] = day['id']

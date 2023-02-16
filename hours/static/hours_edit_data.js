@@ -3,6 +3,8 @@ const head_lookup = [
     'Wochentag',
     'Feiertag',
     'Urlaub',
+    'Sonstiges',
+    'Sonstiges Grund',
     'Zeitausgleich',
     'Stunden soll',
     'Stunden ist',
@@ -122,6 +124,39 @@ async function generate_table() {
         last(row_children).style.backgroundColor = day.vacation ? green : red;
         last(row_children).id = 'vacation';
 
+        //sonstiges
+        row_children.push(document.createElement('td'));
+        let other = document.createElement('input');
+        other.type = 'number';
+        other.style.width = '100%';
+        other.style.padding = 15;
+        other.style.border = 0;
+        other.style.fontSize = 16;
+        other.step = 0.5;
+        other.value = day.other;
+        if (day.other != 0) {
+            other.style.fontWeight = 900;
+            other.style.color = orange;
+        }
+        last(row_children).style.padding = 1;
+        last(row_children).appendChild(other);
+        last(row_children).id = 'other';
+
+        //sonstiges grund
+        row_children.push(document.createElement('td'));
+        let other_reason = document.createElement('input');
+        other_reason.type = 'text';
+        other_reason.style.width = '120px';
+        other_reason.style.padding = 15;
+        other_reason.style.border = 0;
+        other_reason.style.fontSize = 16;
+        other_reason.step = 0.5;
+        other_reason.value = day.other_reason;
+        last(row_children).style.padding = 1;
+        last(row_children).appendChild(other_reason);
+        last(row_children).id = 'other_reason';
+
+
         //zeitausgleich
         row_children.push(document.createElement('td'));
         let overtime_comp = document.createElement('input');
@@ -192,9 +227,9 @@ async function generate_table() {
 
             if (this_.value == 0) {
                 const this_parent_parent = this_.parentNode.parentNode;
-    
+
                 const overtime_comp_element = this_parent_parent.querySelector('#overtime_comp');
-    
+
                 overtime_comp_element.firstChild.value = 0;
             }
         });
@@ -240,6 +275,15 @@ function get_updated_data() {
         const vacation_element = row.querySelector('#vacation');
         data_row.vacation = vacation_element.childNodes[0].childNodes[0].checked;
 
+        //other
+        const other_element = row.querySelector('#other');
+        data_row.other = parseFloat(other_element.childNodes[0].value);
+
+
+        //other reason
+        const other_reason_element = row.querySelector('#other_reason');
+        data_row.other_reason = other_reason_element.childNodes[0].value;
+
         //overtime_comp_prio
         const overtime_comp_prio_element = row.querySelector('#overtime_comp_prio');
         data_row.overtime_comp_prio = parseFloat(overtime_comp_prio_element.childNodes[0].value);
@@ -282,4 +326,35 @@ async function save_data(reload = true) {
 
     if (reload)
         window.location.reload(true);
+}
+
+function find_first_empty() {
+    const table_element = document.getElementById('input_table');
+
+    let firstElement = null;
+
+
+    for (let i = 0; i < table_element.childElementCount; i++) {
+        const row = table_element.childNodes[i];
+
+        const worked_hours_element = row.querySelector('#worked_hours');
+        if (worked_hours_element != null) {
+            const value_str = worked_hours_element.firstChild.value;
+
+            if (!value_str.length) {
+                firstElement = i > 1 ? table_element.childNodes[i - 2] : row;
+                break;
+            }
+        }
+    }
+
+    console.log(firstElement);
+
+    return firstElement;
+}
+
+function scroll_down() {
+    const element = find_first_empty();
+    if (element != null)
+        element.scrollIntoView({ behavior: 'smooth' });
 }

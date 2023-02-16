@@ -58,6 +58,28 @@ async function onLoad() {
 
     date_input_element.valueAsDate = new Date();
     date_input_element.dispatchEvent(new Event('change'));
+
+    //increase
+    const increase_element = document.getElementById('increase');
+    increase_element.addEventListener('click', () => {
+        const worked_hours_input_element = document.getElementById('worked_hours_input');
+
+        let value = parseFloat(worked_hours_input_element.value);
+        value += 0.5;
+
+        worked_hours_input_element.value = value;
+    });
+
+    //decrease
+    const decrease_element = document.getElementById('decrease');
+    decrease_element.addEventListener('click', () => {
+        const worked_hours_input_element = document.getElementById('worked_hours_input');
+
+        let value = parseFloat(worked_hours_input_element.value);
+        value -= 0.5;
+
+        worked_hours_input_element.value = value;
+    });
 }
 
 async function send_to_python(data) {
