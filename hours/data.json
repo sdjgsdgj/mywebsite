@@ -854,7 +854,7 @@
         "other_reason": "",
         "overtime_comp_prio": 0,
         "overtime_comp": 8.5,
-        "worked_hours": null,
+        "worked_hours": 0.0,
         "str": "2023-16-02"
     },
     {
@@ -865,7 +865,7 @@
         "other_reason": "",
         "overtime_comp_prio": 0,
         "overtime_comp": 0,
-        "worked_hours": null,
+        "worked_hours": 8,
         "str": "2023-17-02"
     },
     {

@@ -1,4 +1,5 @@
 let hasBeenFocused = false;
+let todays_work_hours = null;
 
 function confirm_button_onclick() {
     const date = document.getElementById('date_input').valueAsDate;
@@ -7,44 +8,26 @@ function confirm_button_onclick() {
     const worked_hours_input = document.getElementById('worked_hours_input').value;
     const worked_hours = parseFloat(worked_hours_input);
 
-    if (worked_hours_input.length > 0 && (worked_hours < 0 || worked_hours > 24)) {
-        const error_message_container = document.getElementById('error_message_container');
+    send_to_python({
+        time: time_python,
+        worked_hours: worked_hours_input.length > 0 ? worked_hours : null
+    });
 
-        if (!error_message_container.hasChildNodes()) {
-            var error_message = document.createElement('error_message');
-            error_message.setAttribute('type', 'text');
-            error_message.innerHTML = 'Stunden müssen größer gleich 0 und kleiner gleich 24h sein';
-            error_message_container.appendChild(error_message);
-        }
-    } else {
-        send_to_python({
-            time: time_python,
-            worked_hours: worked_hours_input.length > 0 ? worked_hours : null
-        });
-        
-        document.getElementById('worked_hours_input').value = "";
-        
-        const container = document.getElementById('error_message_container');
-        while (container.firstChild) {
-            container.removeChild(container.lastChild);
-        }
-    }
+    document.getElementById('worked_hours_input').value = "";
+    document.getElementById('overtime_input').value = "";
 }
 
 async function set_work_hours(time_python) {
     hasBeenFocused = false;
 
     const work_hours = await (await fetch(`/hours/get-data?time=${time_python}`)).json();
+    todays_work_hours = work_hours;
 
     const worked_hours_input_element = document.getElementById('worked_hours_input');
-
     worked_hours_input_element.value = work_hours;
-    worked_hours_input_element.addEventListener('focus', () => {
-        if (!hasBeenFocused) {
-            worked_hours_input_element.value = null;
-            hasBeenFocused = true;
-        }
-    });
+
+    const overtime_input_element = document.getElementById('overtime_input');
+    overtime_input_element.value = 0.0;
 }
 
 async function onLoad() {
@@ -64,10 +47,12 @@ async function onLoad() {
     increase_element.addEventListener('click', () => {
         const worked_hours_input_element = document.getElementById('worked_hours_input');
 
-        let value = parseFloat(worked_hours_input_element.value);
-        value += 0.5;
+        const value_str = worked_hours_input_element.value;
+        const value = value_str.length == 0 ? 0.5 : parseFloat(value_str) + 0.5;
 
         worked_hours_input_element.value = value;
+
+        worked_hours_input_element.dispatchEvent(new Event('input'));
     });
 
     //decrease
@@ -75,10 +60,46 @@ async function onLoad() {
     decrease_element.addEventListener('click', () => {
         const worked_hours_input_element = document.getElementById('worked_hours_input');
 
-        let value = parseFloat(worked_hours_input_element.value);
-        value -= 0.5;
+        const value_str = worked_hours_input_element.value;
+        const value = value_str.length == 0 ? -0.5 : parseFloat(value_str) - 0.5;
 
         worked_hours_input_element.value = value;
+
+        worked_hours_input_element.dispatchEvent(new Event('input'));
+    });
+
+    //worked hours 
+    const worked_hours_input_element = document.getElementById('worked_hours_input');
+    worked_hours_input_element.addEventListener('focus', (event) => {
+        if (!hasBeenFocused) {
+            event.currentTarget.value = null;
+            hasBeenFocused = true;
+        }
+    });
+    worked_hours_input_element.addEventListener('input', (event) => {
+        const overtime_input_element = document.getElementById('overtime_input');
+
+        if (event.currentTarget.value.length == 0)
+            overtime_input_element.value = "";
+        else
+            overtime_input_element.value = parseFloat(event.currentTarget.value) - todays_work_hours;
+    });
+
+    //overtime
+    const overtime_input_element = document.getElementById('overtime_input');
+    overtime_input_element.addEventListener('focus', (event) => {
+        if (!hasBeenFocused) {
+            event.currentTarget.value = null;
+            hasBeenFocused = true;
+        }
+    });
+    overtime_input_element.addEventListener('input', (event) => {
+        const worked_hours_input_element = document.getElementById('worked_hours_input');
+
+        if (event.currentTarget.value.length == 0)
+            worked_hours_input_element.value = "";
+        else
+            worked_hours_input_element.value = parseFloat(event.currentTarget.value) + todays_work_hours;
     });
 }
 
